@@ -3,6 +3,7 @@ const addBtn = document.getElementById('addBtn')
 const inputConta = document.getElementById('conta')
 const inputCategoria = document.getElementById('categoria')
 const inputValor = document.getElementById('valor')
+const totalGastos = document.getElementById('totalGastos')
 
 let data = []
 
@@ -31,7 +32,7 @@ function getInputValues() {
 
 function renderExpensiveList() {
     expensiveList.innerHTML = ''
-
+    let amountExpensive = 0
     data.forEach((item, index) => {
         const expensiveItem = `
             <div class="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
@@ -42,17 +43,24 @@ function renderExpensiveList() {
                         <div class="text-sm">${item.category} - R$ ${item.amount}</div>
                     </div>
                 </div>
-                <button class="text-red-500 hover:text-red-400">
+                <button onclick="removeExpensive(${item.id})" class="text-red-500 hover:text-red-400">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
         `
+        amountExpensive += parseFloat(item.amount)
         expensiveList.insertAdjacentHTML('beforeend', expensiveItem)
     })
+    totalGastos.textContent = `R$ ${amountExpensive.toFixed(2)}`
 }
 
 function addExpensive() {
     getInputValues()
+    renderExpensiveList()
+}
+
+function removeExpensive(id) {
+    data = data.filter((item) => item.id !== id)
     renderExpensiveList()
 }
 
