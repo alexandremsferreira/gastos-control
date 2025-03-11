@@ -17,16 +17,19 @@ function getInputValues() {
 
     if (contaValida && vencimentoValido && categoriaValida && valorValido) {
         const vencimentoFormatado = dateFns.format(
-            new Date(inputVencimento.value), // Converte para Date
-            "DD/MM/YYYY" // Formata para o padrão brasileiro
+            new Date(inputVencimento.value),
+            "DD/MM/YYYY"
         );
+
+        const vencimentoData = dateFns.parse(inputVencimento.value, "DD/MM/YYYY", new Date());
 
         const newExpense = {
             id: Date.now(),
             title: inputConta.value.trim(),
-            ticketExpiration: vencimentoFormatado, // Data de vencimento formatada
+            ticketExpiration: dateFns.format(vencimentoData, "DD/MM/YYYY"), // Formata corretamente
             category: inputCategoria.value.trim(),
-            date: dateFns.format(new Date(), "DD/MM/YYYY"), // Data atual formatada
+            date: dateFns.format(new Date(), "DD/MM/YYYY"),
+            daysExpires: dateFns.differenceInDays(vencimentoData, new Date()), // Agora funciona corretamente
             amount: parseFloat(inputValor.value).toFixed(2)
         };
 
@@ -35,11 +38,11 @@ function getInputValues() {
         inputVencimento.value = "";
         inputCategoria.value = "";
         inputValor.value = "";
+
     } else {
         alert("Preencha todos os campos corretamente!");
     }
 }
-
 
 function renderExpensiveList() {
     expensiveList.innerHTML = ''
@@ -56,6 +59,7 @@ function renderExpensiveList() {
                         <div class="text-sm">${item.category} - R$ ${item.amount}</div>
                     </div>
                 </div>
+                <div class="text-xs">Faltam ${item.daysExpires} dia(s) para o vencimento</div>
                 <button onclick="removeExpensive(${item.id})" class="text-red-500 hover:text-red-400">
                     <i class="fas fa-trash"></i>
                 </button>
